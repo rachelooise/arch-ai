@@ -5,11 +5,11 @@ Group completed work by feature in a numbered list, including implementation and
 
 ## Current Phase
 
-- Authentication complete
+- Feature 04: Project dialogs complete
 
 ## Current Goal
 
-- Completed the auth UI refinement: equal desktop columns, a cyan-tinted left panel, and consistent Geist typography.
+- Completed Feature 04: editor home, mock project dialogs, owned-project actions, and mobile sidebar dismissal.
 
 ## Completed
 
@@ -20,6 +20,8 @@ Group completed work by feature in a numbered list, including implementation and
 3. **Feature 03: Authentication** — Installed `@clerk/ui` and wrapped the root layout with `ClerkProvider`, using its dark theme and existing CSS tokens for appearance. Added compact responsive sign-in/sign-up pages with catch-all Clerk routes and Suspense boundaries for Cache Components. Added root `proxy.ts` to protect application and API routes by default, exposing only the auth paths and their nested flows (static assets bypass the proxy). Redirected `/` by session state and set post-auth fallback to `/editor`. Mounted the persistent editor shell in `app/editor/layout.tsx` and added the default Clerk `UserButton` for profile and logout. Passed ESLint, TypeScript, `npm run build`, and diff whitespace checks. HTTP checks confirmed public auth pages return 200 and unauthenticated requests to `/`, `/editor`, `/sign-in-other`, and an API path redirect to sign-in. Browser sign-in, profile, and logout flows were not exercised.
 
 4. **Auth UI refinement** — Updated both auth pages to explicit equal-width desktop columns with minimum-width constraints. Added a solid cyan-tinted left panel derived from existing CSS palette variables, using compact branding and a text-only feature list; retained the centered dark form panel and form-only mobile layout. Applied the loaded Geist Sans font directly to the body and explicitly configured Clerk text and buttons with Geist Sans and code with Geist Mono. Production build and ESLint passed; browser visual checks were not run.
+
+5. **Feature 04: Project Dialogs** - Added the minimal centered editor home with the specified copy and Plus button. Added a dedicated hook for dialog, form, loading, and in-memory mock project state. Wired both create buttons and owned-project rename/delete actions; shared projects hide actions. Create includes a live slug preview, rename includes the current name and an auto-focused input with Enter submission, and delete is an input-free destructive confirmation. Added a mobile sidebar scrim that closes on outside taps. Passed ESLint, TypeScript, production build, and diff whitespace checks. Browser interaction checks were not run. No API calls or persistence were added.
 
 ## In Progress
 
@@ -43,10 +45,11 @@ Group completed work by feature in a numbered list, including implementation and
 
 ## Session Notes
 
+- Feature 04 readability fix: explicitly applied the primary text and caret colors to the project name input and retained full text opacity while saving, keeping create and rename values readable on the dark background.
 - The dark palette from `ui-context.md` is implemented in `app/globals.css`; the root layout enables dark variants and CSS uses `color-scheme: dark`.
 - Generated `components/ui/*` files were not edited after installation.
 - Production builds fetch Geist fonts and need access to Google Fonts. The build passed with network access.
-- The editor sidebar starts closed. New Project is a placeholder button pending a feature specification for project creation.
+- The editor sidebar starts closed. Project dialogs use in-memory mock data; changes reset on reload.
 - Browser interaction checks were not run; static checks and production compilation passed.
 - Feature 03 review fix: pinned the shared auth URLs to `/sign-in` and `/sign-up`, matching the implemented pages. Removed environment overrides that could point Clerk and public route protection at nonexistent custom paths.
 - Feature 03 layout review: moved `ClerkProvider` inside `<body>` around page children, preserving all provider options and root font classes. Production build passed.
