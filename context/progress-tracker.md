@@ -5,11 +5,11 @@ Group completed work by feature in a numbered list, including implementation and
 
 ## Current Phase
 
-- Feature 04: Project dialogs complete
+- Feature 05: Prisma complete
 
 ## Current Goal
 
-- Completed Feature 04: editor home, mock project dialogs, owned-project actions, and mobile sidebar dismissal.
+- Completed Feature 05: project models, cached Prisma client, and first migration.
 
 ## Completed
 
@@ -22,6 +22,8 @@ Group completed work by feature in a numbered list, including implementation and
 4. **Auth UI refinement** — Updated both auth pages to explicit equal-width desktop columns with minimum-width constraints. Added a solid cyan-tinted left panel derived from existing CSS palette variables, using compact branding and a text-only feature list; retained the centered dark form panel and form-only mobile layout. Applied the loaded Geist Sans font directly to the body and explicitly configured Clerk text and buttons with Geist Sans and code with Geist Mono. Production build and ESLint passed; browser visual checks were not run.
 
 5. **Feature 04: Project Dialogs** - Added the minimal centered editor home with the specified copy and Plus button. Added a dedicated hook for dialog, form, loading, and in-memory mock project state. Wired both create buttons and owned-project rename/delete actions; shared projects hide actions. Create includes a live slug preview, rename includes the current name and an auto-focused input with Enter submission, and delete is an input-free destructive confirmation. Added a mobile sidebar scrim that closes on outside taps. Passed ESLint, TypeScript, production build, and diff whitespace checks. Browser interaction checks were not run. No API calls or persistence were added.
+
+6. **Feature 05: Prisma** - Added `prisma/models/project.prisma` with Project, ProjectStatus, and ProjectCollaborator, including the Clerk owner ID, optional description and canvas path, timestamps, cascade deletion, project/email uniqueness, and requested indexes. Added multi-file schema configuration and `lib/prisma.ts` with Accelerate URL branching, direct PostgreSQL adapter support, and a development global singleton. Created and applied `20261010062450_init_projects` to the configured database. Schema validation, client generation, TypeScript, ESLint, and production build passed. Read-only queries through both models, live database index and cascade metadata checks, and singleton reuse after module reload passed. Hosted Accelerate queries were not verified.
 
 ## In Progress
 
@@ -45,6 +47,7 @@ Group completed work by feature in a numbered list, including implementation and
 
 ## Session Notes
 
+- Feature 05: pinned Prisma CLI, client, and PostgreSQL adapter to 7.10.0 because the specified Accelerate integration is unsupported by Prisma 8. Prisma CLI loads the existing `.env.local` using `@next/env`; the production build generates the ignored client automatically. The configured direct PostgreSQL connection was verified. A synthetic Accelerate URL was rejected as an invalid API key; hosted Accelerate queries require real credentials and were not verified.
 - Feature 04 readability fix: explicitly applied the primary text and caret colors to the project name input and retained full text opacity while saving, keeping create and rename values readable on the dark background.
 - The dark palette from `ui-context.md` is implemented in `app/globals.css`; the root layout enables dark variants and CSS uses `color-scheme: dark`.
 - Generated `components/ui/*` files were not edited after installation.
