@@ -193,7 +193,7 @@ const users = await prisma.user.findMany({
 ```typescript
 const users = await prisma.user.findMany({
   orderBy: {
-    posts: { _count: 'desc' }
+    posts: { count: 'desc' }
   }
 })
 ```

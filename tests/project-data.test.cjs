@@ -18,7 +18,7 @@ function replaceModule(name, exports) {
 replaceModule("server-only", {});
 replaceModule("@clerk/nextjs/server", {
   auth: async () => ({ userId }),
-  currentUser: async () => ({ emailAddresses: emails }),
+  currentUser: async () => ({ primaryEmailAddressId: "primary", emailAddresses: emails }),
 });
 replaceModule("next/navigation", {
   redirect: (path) => { throw new Error(`redirect:${path}`); },
@@ -33,25 +33,26 @@ replaceModule("../lib/prisma.ts", {
   } },
 });
 
-const { getProjectLists, getAccessibleProject } = require("../lib/projects.ts");
+const { getProjectLists } = require("../lib/projects.ts");
+const { getProjectAccess } = require("../lib/project-access.ts");
 
 beforeEach(() => {
   userId = "user-owner";
   queries = [];
   emails = [
-    { emailAddress: "Verified@example.com", verification: { status: "verified" } },
-    { emailAddress: "unverified@example.com", verification: { status: "unverified" } },
+    { id: "primary", emailAddress: "Primary@example.com", verification: { status: "verified" } },
+    { id: "secondary", emailAddress: "secondary@example.com", verification: { status: "verified" } },
   ];
 });
 
-test("server helper loads separate owned/shared lists using only verified emails", async () => {
+test("server helper loads separate owned/shared lists using the primary email", async () => {
   const result = await getProjectLists();
   assert.deepEqual(result.ownedProjects, [{ id: "owned", name: "Project", owned: true }]);
   assert.deepEqual(result.sharedProjects, [{ id: "shared", name: "Project", owned: false }]);
   assert.deepEqual(queries[0].where, { ownerId: userId });
   assert.deepEqual(queries[1].where, {
     ownerId: { not: userId },
-    collaborators: { some: { email: { in: ["Verified@example.com"], mode: "insensitive" } } },
+    collaborators: { some: { email: { equals: "Primary@example.com", mode: "insensitive" } } },
   });
   for (const query of queries) {
     assert.deepEqual(query.select, { id: true, name: true });
@@ -59,13 +60,13 @@ test("server helper loads separate owned/shared lists using only verified emails
   }
 });
 
-test("workspace queries require ownership or a verified collaborator email", async () => {
-  assert.equal(await getAccessibleProject("target"), null);
+test("workspace queries require ownership or the primary collaborator email", async () => {
+  assert.equal(await getProjectAccess("target"), null);
   assert.deepEqual(queries[0].where, {
     id: "target",
     OR: [
       { ownerId: userId },
-      { collaborators: { some: { email: { in: ["Verified@example.com"], mode: "insensitive" } } } },
+      { collaborators: { some: { email: { equals: "Primary@example.com", mode: "insensitive" } } } },
     ],
   });
 });
@@ -73,6 +74,15 @@ test("workspace queries require ownership or a verified collaborator email", asy
 test("signed-out server requests redirect before querying project data", async () => {
   userId = null;
   await assert.rejects(getProjectLists(), /redirect:\/sign-in/);
-  await assert.rejects(getAccessibleProject("target"), /redirect:\/sign-in/);
+  await assert.rejects(getProjectAccess("target"), /redirect:\/sign-in/);
   assert.deepEqual(queries, []);
+});
+
+test("users without a primary email still load owned projects but no shared list", async () => {
+  emails = [];
+  const result = await getProjectLists();
+  assert.deepEqual(result.sharedProjects, []);
+  assert.equal(queries.length, 1);
+  await getProjectAccess("target");
+  assert.deepEqual(queries[1].where.OR, [{ ownerId: userId }]);
 });

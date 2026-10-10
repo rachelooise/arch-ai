@@ -2,15 +2,21 @@
 
 Execute multiple operations atomically.
 
-## Sequential Transactions
+## Transactions with Dependent Operations
 
-Array of operations executed in order:
+Use array transactions for independent operations executed atomically. Use an
+interactive transaction when a later operation depends on an earlier result:
 
 ```typescript
-const [user, post] = await prisma.$transaction([
-  prisma.user.create({ data: { email: 'alice@prisma.io' } }),
-  prisma.post.create({ data: { title: 'Hello', authorId: 1 } })
-])
+const { user, post } = await prisma.$transaction(async (tx) => {
+  const user = await tx.user.create({
+    data: { email: 'alice@prisma.io' }
+  })
+  const post = await tx.post.create({
+    data: { title: 'Hello', authorId: user.id }
+  })
+  return { user, post }
+})
 ```
 
 ### All or nothing
@@ -146,12 +152,14 @@ await prisma.$transaction(async (tx) => {
 ### Handle errors
 
 ```typescript
+import { Prisma } from '../generated/client'
+
 try {
   await prisma.$transaction(async (tx) => {
     // operations
   })
 } catch (e) {
-  if (e.code === 'P2002') {
+  if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
     // Handle unique constraint violation
   }
   throw e

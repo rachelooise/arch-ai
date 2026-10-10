@@ -122,6 +122,8 @@ const result = await prisma.user.createMany({
 // Returns { count: 2 }
 ```
 
+`skipDuplicates` is not supported on MongoDB, SQL Server, or SQLite.
+
 ### createManyAndReturn
 
 Create multiple and return them:
@@ -135,6 +137,9 @@ const users = await prisma.user.createManyAndReturn({
 })
 // Returns array of created users
 ```
+
+`createManyAndReturn()` is supported only on PostgreSQL, CockroachDB, and
+SQLite.
 
 ## Update Operations
 
@@ -185,6 +190,9 @@ const users = await prisma.user.updateManyAndReturn({
 })
 // Returns array of updated users
 ```
+
+`updateManyAndReturn()` is supported only on PostgreSQL, CockroachDB, and
+SQLite.
 
 ### upsert
 

@@ -101,7 +101,7 @@ import { queryTags, withQueryTags } from '@prisma/sqlcommenter-query-tags'
 import { traceContext } from '@prisma/sqlcommenter-trace-context'
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg(process.env.DATABASE_URL!),
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
   comments: [prismaQueryInsights(), traceContext(), queryTags()],
 })
 

@@ -162,7 +162,7 @@ const prisma = new PrismaClient({ adapter }).$extends({
   }
 })
 
-const user = await prisma.user.findFirst()
+const user = await prisma.user.findFirstOrThrow()
 console.log(user.fullName) // Computed field
 ```
 

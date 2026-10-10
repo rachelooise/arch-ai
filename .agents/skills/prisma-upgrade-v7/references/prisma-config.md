@@ -43,17 +43,6 @@ datasource: {
 }
 ```
 
-### datasource.directUrl
-
-Direct connection URL (bypassing connection pooler):
-
-```typescript
-datasource: {
-  url: env('DATABASE_URL'),
-  directUrl: env('DIRECT_DATABASE_URL'),
-}
-```
-
 ### datasource.shadowDatabaseUrl
 
 Shadow database for migrations:
@@ -105,7 +94,6 @@ export default defineConfig({
   // Database connection
   datasource: {
     url: env('DATABASE_URL'),
-    directUrl: env('DIRECT_DATABASE_URL'),
     shadowDatabaseUrl: env('SHADOW_DATABASE_URL'),
   },
 })
@@ -161,11 +149,14 @@ import { defineConfig, env } from 'prisma/config'
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    url: env('DATABASE_URL'),
-    directUrl: env('DIRECT_URL'),
+    url: env('DIRECT_URL'),
   },
 })
 ```
+
+Set `datasource.url` to the connection Prisma CLI commands should use. For
+Prisma Migrate or introspection, that should be a direct database URL; there
+is no separate `directUrl` setting in `prisma.config.ts`.
 
 And update schema.prisma:
 
@@ -192,9 +183,9 @@ import { defineConfig, env } from 'prisma/config'
 import path from 'path'
 
 export default defineConfig({
-  schema: path.join(__dirname, 'packages/database/prisma/schema.prisma'),
+  schema: path.resolve(process.cwd(), 'packages/database/prisma/schema.prisma'),
   migrations: {
-    path: path.join(__dirname, 'packages/database/prisma/migrations'),
+    path: path.resolve(process.cwd(), 'packages/database/prisma/migrations'),
   },
   datasource: {
     url: env('DATABASE_URL'),

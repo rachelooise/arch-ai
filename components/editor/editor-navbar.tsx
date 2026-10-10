@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Share2 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
@@ -8,13 +8,18 @@ import { Button } from "@/components/ui/button";
 interface EditorNavbarProps {
   isSidebarOpen: boolean;
   onToggleSidebar: () => void;
+  projectName?: string;
+  isAiSidebarOpen: boolean;
+  onToggleAiSidebar: () => void;
+  onShare: () => void;
 }
 
-export function EditorNavbar({ isSidebarOpen, onToggleSidebar }: EditorNavbarProps) {
+export function EditorNavbar({ isSidebarOpen, onToggleSidebar, projectName, isAiSidebarOpen, onToggleAiSidebar, onShare }: EditorNavbarProps) {
   const SidebarIcon = isSidebarOpen ? PanelLeftClose : PanelLeftOpen;
+  const AiSidebarIcon = isAiSidebarOpen ? PanelRightClose : PanelRightOpen;
 
   return (
-    <header className="z-30 grid h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-surface-border bg-surface px-4">
+    <header className="z-30 grid h-14 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-surface-border bg-surface px-4">
       <div className="flex items-center">
         <Button
           type="button"
@@ -28,8 +33,19 @@ export function EditorNavbar({ isSidebarOpen, onToggleSidebar }: EditorNavbarPro
           <SidebarIcon className="h-5 w-5" aria-hidden="true" />
         </Button>
       </div>
-      <div />
-      <div className="flex items-center justify-end">
+      <div className="min-w-0 text-center">
+        {projectName && <h1 className="truncate text-sm font-semibold" title={projectName}>{projectName}</h1>}
+      </div>
+      <div className="flex items-center justify-end gap-2">
+        {projectName && <>
+          <Button type="button" variant="outline" size="sm" onClick={onShare} aria-label="Share project">
+            <Share2 className="h-4 w-4" aria-hidden="true" /><span className="hidden sm:inline">Share</span>
+          </Button>
+          <Button type="button" variant="ghost" size="icon" aria-label={isAiSidebarOpen ? "Close AI sidebar" : "Open AI sidebar"}
+            aria-expanded={isAiSidebarOpen} aria-controls="workspace-ai-sidebar" onClick={onToggleAiSidebar}>
+            <AiSidebarIcon className="h-5 w-5" aria-hidden="true" />
+          </Button>
+        </>}
         <UserButton />
       </div>
     </header>

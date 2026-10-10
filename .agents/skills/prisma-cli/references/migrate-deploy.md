@@ -92,9 +92,10 @@ CMD npx prisma migrate deploy && node dist/index.js
 If a migration fails, `migrate deploy` exits with error. The failed migration is marked as failed in `_prisma_migrations`.
 
 To fix:
-1. Resolve the issue (fix SQL, database state, etc.)
-2. Mark as resolved: `prisma migrate resolve --applied <migration_name>`
-3. Re-run: `prisma migrate deploy`
+1. If you manually complete and verify every step in the migration, mark it as applied:
+   `prisma migrate resolve --applied <migration_name>`
+2. Otherwise, mark it as rolled back: `prisma migrate resolve --rolled-back <migration_name>`
+3. Repair the underlying issue, then re-run: `prisma migrate deploy`
 
 ### Check status first
 
