@@ -1,22 +1,21 @@
 # Progress Tracker
 
 Update this file after every meaningful implementation change.
+Group completed work by feature in a numbered list, including implementation and verification details for each feature.
 
 ## Current Phase
 
-- Design system complete
+- Editor chrome complete
 
 ## Current Goal
 
-- Completed `01-design-system.md`: shadcn/ui primitives and the dark theme.
+- Completed `02-editor.md`: reusable navbar, floating project sidebar, and dialog styling pattern.
 
 ## Completed
 
-- Boilerplate cleanup.
-- Initialized shadcn/ui (Radix Nova) and installed Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea, and Lucide React.
-- Added the specified dark palette, Tailwind and shadcn tokens, Geist typography, and global primitive radius styling. Generated UI files remain unchanged.
-- Added `lib/utils.ts`, re-exporting the class-merging `cn()` helper supplied by the current shadcn CLI.
-- Verified all seven component imports and server renders, `cn()` conflict resolution and conditional inputs, dark-only theme configuration, ESLint, TypeScript, and the production build.
+1. **Feature 01: Design System** — Cleaned up the boilerplate and initialized shadcn/ui (Radix Nova) with Button, Card, Dialog, Input, Tabs, Textarea, ScrollArea, and Lucide React. Implemented the specified dark palette, Tailwind and shadcn tokens, Geist typography, and global primitive radius styling while preserving generated UI files. Added `lib/utils.ts` to re-export the CLI's `cn()` helper. Verified all seven component imports and server renders, class merging and conditional inputs, dark-only theme configuration, ESLint, TypeScript, and the production build.
+
+2. **Feature 02: Editor Chrome** — Built the fixed-height navbar with left, center, and empty right sections and state-aware PanelLeft icons. Added the floating, sliding project sidebar with a Projects header, close action, empty My Projects and Shared tabs, and a full-width New Project placeholder button. Mounted the reusable editor shell in `app/layout.tsx` so the navbar and sidebar frame page children, preserve shared state across navigation, and overlay the canvas without shifting its layout. Prepared token-based dialog title, description, and footer styling and documented composition in `ui-context.md` without creating actual dialogs. Passed ESLint, `tsc --noEmit`, the production build, and diff whitespace checks; browser interaction checks were not run.
 
 ## In Progress
 
@@ -24,7 +23,7 @@ Update this file after every meaningful implementation change.
 
 ## Next Up
 
-- Implement `02-editor.md` after the design system is complete.
+- Await the next feature specification.
 
 ## Open Questions
 
@@ -35,9 +34,13 @@ Update this file after every meaningful implementation change.
 - Use generated shadcn/ui components without modifying `components/ui/*`.
 - Define the dark-only palette in global CSS and map it to Tailwind and shadcn semantic tokens.
 - Use the current CLI's `cn` package via `lib/utils.ts` so application code and generated components share the same class-merging behavior.
+- Keep sidebar visibility in `EditorShell`; position the sidebar absolutely above the canvas and make its closed contents inert.
+- Compose future dialogs from existing shadcn primitives using global token styling.
 
 ## Session Notes
 
 - The dark palette from `ui-context.md` is implemented in `app/globals.css`; the root layout enables dark variants and CSS uses `color-scheme: dark`.
 - Generated `components/ui/*` files were not edited after installation.
 - Production builds fetch Geist fonts and need access to Google Fonts. The build passed with network access.
+- The editor sidebar starts closed. New Project is a placeholder button pending a feature specification for project creation.
+- Browser interaction checks were not run; static checks and production compilation passed.

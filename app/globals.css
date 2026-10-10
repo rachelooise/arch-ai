@@ -122,11 +122,19 @@
   }
 
   [data-slot="dialog-content"] {
-    @apply rounded-3xl ring-surface-border;
+    @apply rounded-3xl bg-elevated text-copy-primary ring-surface-border;
+  }
+
+  [data-slot="dialog-title"] {
+    @apply text-copy-primary;
+  }
+
+  [data-slot="dialog-description"] {
+    @apply text-copy-muted;
   }
 
   [data-slot="dialog-footer"] {
-    @apply rounded-b-3xl;
+    @apply rounded-b-3xl border-surface-border bg-subtle;
   }
 
   [data-slot="button"],
