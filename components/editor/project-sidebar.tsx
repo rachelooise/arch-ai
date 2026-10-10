@@ -1,6 +1,8 @@
 "use client";
 
-import { FolderOpen, Plus, Users, X } from "lucide-react";
+import { FolderOpen, Pencil, Plus, Trash2, Users, X } from "lucide-react";
+import { useProjects } from "@/components/editor/project-dialogs";
+import type { Project } from "@/hooks/use-project-dialogs";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +14,26 @@ interface ProjectSidebarProps {
 }
 
 export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
+  const { projects, openDialog } = useProjects();
+
+  function projectList(items: Project[], shared: boolean) {
+    if (!items.length) return (
+      <div className="flex flex-col items-center gap-3 py-12 text-center text-copy-muted">
+        {shared ? <Users className="h-8 w-8" aria-hidden="true" /> : <FolderOpen className="h-8 w-8" aria-hidden="true" />}
+        <p>{shared ? "No shared projects yet." : "No projects yet."}</p>
+      </div>
+    );
+    return <ul className="space-y-2">{items.map((project) => (
+      <li key={project.id} className="flex items-center gap-2 rounded-xl bg-elevated p-2">
+        <FolderOpen className="h-4 w-4 shrink-0 text-copy-muted" aria-hidden="true" />
+        <span className="min-w-0 flex-1 break-words text-sm">{project.name}</span>
+        {project.owned && <>
+          <Button type="button" variant="ghost" size="icon-sm" aria-label={`Rename ${project.name}`} onClick={() => openDialog({ type: "rename", project })}><Pencil className="h-4 w-4" aria-hidden="true" /></Button>
+          <Button type="button" variant="ghost" size="icon-sm" aria-label={`Delete ${project.name}`} onClick={() => openDialog({ type: "delete", project })}><Trash2 className="h-4 w-4" aria-hidden="true" /></Button>
+        </>}
+      </li>
+    ))}</ul>;
+  }
   return (
     <aside
       id="project-sidebar"
@@ -35,20 +57,14 @@ export function ProjectSidebar({ isOpen, onClose }: ProjectSidebarProps) {
           <TabsTrigger value="shared">Shared</TabsTrigger>
         </TabsList>
         <TabsContent value="my-projects">
-          <div className="flex flex-col items-center gap-3 py-12 text-center text-copy-muted">
-            <FolderOpen className="h-8 w-8" aria-hidden="true" />
-            <p>No projects yet.</p>
-          </div>
+          {projectList(projects.filter((project) => project.owned), false)}
         </TabsContent>
         <TabsContent value="shared">
-          <div className="flex flex-col items-center gap-3 py-12 text-center text-copy-muted">
-            <Users className="h-8 w-8" aria-hidden="true" />
-            <p>No shared projects yet.</p>
-          </div>
+          {projectList(projects.filter((project) => !project.owned), true)}
         </TabsContent>
       </Tabs>
       <div className="shrink-0 border-t border-surface-border p-4">
-        <Button type="button" className="w-full">
+        <Button type="button" className="w-full" onClick={() => openDialog({ type: "create" })}>
           <Plus className="h-4 w-4" aria-hidden="true" />
           New Project
         </Button>
