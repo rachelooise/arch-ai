@@ -48,4 +48,5 @@ Group completed work by feature in a numbered list, including implementation and
 - Production builds fetch Geist fonts and need access to Google Fonts. The build passed with network access.
 - The editor sidebar starts closed. New Project is a placeholder button pending a feature specification for project creation.
 - Browser interaction checks were not run; static checks and production compilation passed.
-- Feature 03 configuration: .env.local contained only Clerk keys; standard Clerk sign-in/sign-up route variables are honored when provided, otherwise /sign-in and /sign-up are used without adding or renaming environment variables.
+- Feature 03 review fix: pinned the shared auth URLs to `/sign-in` and `/sign-up`, matching the implemented pages. Removed environment overrides that could point Clerk and public route protection at nonexistent custom paths.
+- Feature 03 layout review: moved `ClerkProvider` inside `<body>` around page children, preserving all provider options and root font classes. Production build passed.

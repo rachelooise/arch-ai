@@ -22,44 +22,46 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <ClerkProvider
-      signInUrl={signInUrl}
-      signUpUrl={signUpUrl}
-      signInFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || "/editor"}
-      signUpFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || "/editor"}
-      appearance={{
-        theme: dark,
-        variables: {
-          colorPrimary: "var(--accent-primary)",
-          colorPrimaryForeground: "var(--bg-base)",
-          colorBackground: "var(--bg-surface)",
-          colorForeground: "var(--text-primary)",
-          colorMuted: "var(--bg-subtle)",
-          colorMutedForeground: "var(--text-muted)",
-          colorNeutral: "var(--text-primary)",
-          colorInput: "var(--bg-elevated)",
-          colorInputForeground: "var(--text-primary)",
-          colorBorder: "var(--border-default)",
-          colorRing: "var(--accent-primary)",
-          colorDanger: "var(--state-error)",
-          colorSuccess: "var(--state-success)",
-          colorWarning: "var(--state-warning)",
-          colorShadow: "var(--bg-base)",
-          colorModalBackdrop: "var(--bg-base)",
-          colorShimmer: "var(--bg-subtle)",
-          fontFamily: geistSans.style.fontFamily,
-          fontFamilyButtons: geistSans.style.fontFamily,
-          fontFamilyMono: geistMono.style.fontFamily,
-          borderRadius: "var(--radius)",
-        },
-      }}
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
-      <html
-        lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
-      >
-        <body className={`${geistSans.className} min-h-full flex flex-col`}>{children}</body>
-      </html>
-    </ClerkProvider>
+      <body className={`${geistSans.className} min-h-full flex flex-col`}>
+        <ClerkProvider
+          signInUrl={signInUrl}
+          signUpUrl={signUpUrl}
+          signInFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL || "/editor"}
+          signUpFallbackRedirectUrl={process.env.NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL || "/editor"}
+          appearance={{
+            theme: dark,
+            variables: {
+              colorPrimary: "var(--accent-primary)",
+              colorPrimaryForeground: "var(--bg-base)",
+              colorBackground: "var(--bg-surface)",
+              colorForeground: "var(--text-primary)",
+              colorMuted: "var(--bg-subtle)",
+              colorMutedForeground: "var(--text-muted)",
+              colorNeutral: "var(--text-primary)",
+              colorInput: "var(--bg-elevated)",
+              colorInputForeground: "var(--text-primary)",
+              colorBorder: "var(--border-default)",
+              colorRing: "var(--accent-primary)",
+              colorDanger: "var(--state-error)",
+              colorSuccess: "var(--state-success)",
+              colorWarning: "var(--state-warning)",
+              colorShadow: "var(--bg-base)",
+              colorModalBackdrop: "var(--bg-base)",
+              colorShimmer: "var(--bg-subtle)",
+              fontFamily: geistSans.style.fontFamily,
+              fontFamilyButtons: geistSans.style.fontFamily,
+              fontFamilyMono: geistMono.style.fontFamily,
+              borderRadius: "var(--radius)",
+            },
+          }}
+        >
+          {children}
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
