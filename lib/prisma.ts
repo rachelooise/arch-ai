@@ -3,7 +3,8 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 
 import { PrismaClient } from "@/generated/prisma/client";
 
-function createPrismaClient() {
+// Expose the shared query API without transport-specific extension signatures.
+function createPrismaClient(): Omit<PrismaClient, "$on" | "$extends"> {
   const databaseUrl = process.env.DATABASE_URL;
 
   if (!databaseUrl) {
@@ -13,7 +14,7 @@ function createPrismaClient() {
   if (databaseUrl.startsWith("prisma+postgres://")) {
     return new PrismaClient({ accelerateUrl: databaseUrl }).$extends(
       withAccelerate(),
-    );
+    ) as unknown as Omit<PrismaClient, "$on" | "$extends">;
   }
 
   return new PrismaClient({

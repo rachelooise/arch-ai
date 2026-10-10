@@ -5,11 +5,11 @@ Group completed work by feature in a numbered list, including implementation and
 
 ## Current Phase
 
-- Feature 05: Prisma complete
+- Feature 07: Wire Editor Home complete
 
 ## Current Goal
 
-- Completed Feature 05: project models, cached Prisma client, and first migration.
+- Completed Feature 07: server-loaded owned/shared projects, real dialog mutations, and workspace navigation.
 
 ## Completed
 
@@ -24,6 +24,10 @@ Group completed work by feature in a numbered list, including implementation and
 5. **Feature 04: Project Dialogs** - Added the minimal centered editor home with the specified copy and Plus button. Added a dedicated hook for dialog, form, loading, and in-memory mock project state. Wired both create buttons and owned-project rename/delete actions; shared projects hide actions. Create includes a live slug preview, rename includes the current name and an auto-focused input with Enter submission, and delete is an input-free destructive confirmation. Added a mobile sidebar scrim that closes on outside taps. Passed ESLint, TypeScript, production build, and diff whitespace checks. Browser interaction checks were not run. No API calls or persistence were added.
 
 6. **Feature 05: Prisma** - Added `prisma/models/project.prisma` with Project, ProjectStatus, and ProjectCollaborator, including the Clerk owner ID, optional description and canvas path, timestamps, cascade deletion, project/email uniqueness, and requested indexes. Added multi-file schema configuration and `lib/prisma.ts` with Accelerate URL branching, direct PostgreSQL adapter support, and a development global singleton. Created and applied `20261010062450_init_projects` to the configured database. Schema validation, client generation, TypeScript, ESLint, and production build passed. Read-only queries through both models, live database index and cascade metadata checks, and singleton reuse after module reload passed. Hosted Accelerate queries were not verified.
+
+7. **Feature 06: Project APIs** - Added GET/POST `/api/projects` and PATCH/DELETE `/api/projects/[projectId]`. Lists filter by the authenticated Clerk owner and sort newest first. Creation defaults missing names to `Untitled Project`, preserves schema-generated IDs, and ignores client-supplied ownership. Rename/delete check ownership and include it in mutation filters; signed-out requests return JSON 401, non-owners receive 403, missing projects receive 404, and invalid names/JSON receive 400. Updated the proxy for project API 401 responses while retaining editor sign-in redirects. Corrected the singleton's shared query type for direct and Accelerate transports. All 26 isolated route tests, TypeScript, ESLint, production build, and diff whitespace checks passed. Production HTTP checks confirmed JSON 401 without redirects for all four endpoints and retained editor redirects. Signed-in CRUD and 403 behavior were tested with mocked Clerk/database dependencies; a live signed-in Clerk session was not exercised. No UI integration was added.
+
+8. **Feature 07: Wire Editor Home** - Converted the editor home to a Server Component with a small client create button. Added the missing server-only project data helper and loaded owned/shared lists in the shared editor server layout, passing both lists to the sidebar without client-side initial fetching. Shared access matches verified Clerk emails case-insensitively and excludes owned projects. Replaced the mock dialog hook with `useProjectActions`, including stable per-dialog random suffixes, slugified room ID previews, API mutations, loading/duplicate-submission guards, and visible errors. Creation persists the validated room ID as the project ID and navigates to `/editor/[projectId]`; legacy requests without a room ID retain schema-generated IDs and collisions return 409. Rename refreshes without changing the room ID; delete redirects home for the active workspace and otherwise refreshes. Added sidebar workspace links and a minimal workspace destination with owner/collaborator access checks and a room ID equal to the project ID. All 48 project API/data/mutation tests, TypeScript, ESLint, production build, and diff whitespace checks passed. Tests mock Clerk, database, fetch, and navigation boundaries; live signed-in browser interaction was not exercised. Liveblocks runtime/canvas integration remains for a later feature.
 
 ## In Progress
 
@@ -52,7 +56,7 @@ Group completed work by feature in a numbered list, including implementation and
 - The dark palette from `ui-context.md` is implemented in `app/globals.css`; the root layout enables dark variants and CSS uses `color-scheme: dark`.
 - Generated `components/ui/*` files were not edited after installation.
 - Production builds fetch Geist fonts and need access to Google Fonts. The build passed with network access.
-- The editor sidebar starts closed. Project dialogs use in-memory mock data; changes reset on reload.
+- The editor sidebar starts closed. Feature 07 replaced mock project state with server-loaded database lists and persistent API mutations; initial data is fetched in the shared server layout so home and workspace pages share the sidebar.
 - Browser interaction checks were not run; static checks and production compilation passed.
 - Feature 03 review fix: pinned the shared auth URLs to `/sign-in` and `/sign-up`, matching the implemented pages. Removed environment overrides that could point Clerk and public route protection at nonexistent custom paths.
 - Feature 03 layout review: moved `ClerkProvider` inside `<body>` around page children, preserving all provider options and root font classes. Production build passed.

@@ -5,15 +5,18 @@ import { useState, type ReactNode } from "react";
 import { EditorNavbar } from "@/components/editor/editor-navbar";
 import { ProjectSidebar } from "@/components/editor/project-sidebar";
 import { ProjectDialogs, ProjectDialogsContext } from "@/components/editor/project-dialogs";
-import { useProjectDialogs } from "@/hooks/use-project-dialogs";
+import { useProjectActions } from "@/hooks/use-project-actions";
+import type { SidebarProject } from "@/lib/project-room";
 
 interface EditorShellProps {
   children?: ReactNode;
+  ownedProjects: SidebarProject[];
+  sharedProjects: SidebarProject[];
 }
 
-export function EditorShell({ children }: EditorShellProps) {
+export function EditorShell({ children, ownedProjects, sharedProjects }: EditorShellProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const projects = useProjectDialogs();
+  const projects = useProjectActions();
 
   return (
     <ProjectDialogsContext.Provider value={projects}>
@@ -22,7 +25,7 @@ export function EditorShell({ children }: EditorShellProps) {
       <div className="relative min-h-0 flex-1 overflow-hidden">
         <main aria-label="Editor canvas" className="h-full w-full">{children}</main>
         {isSidebarOpen && <button type="button" aria-label="Close projects sidebar" className="absolute inset-0 z-10 bg-base/70 backdrop-blur-sm md:hidden" onClick={() => setIsSidebarOpen(false)} />}
-        <ProjectSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <ProjectSidebar ownedProjects={ownedProjects} sharedProjects={sharedProjects} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       </div>
     </div>
     <ProjectDialogs />
