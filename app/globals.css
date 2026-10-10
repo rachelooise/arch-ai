@@ -19,6 +19,7 @@
   --text-faint: #505060;
   --accent-primary: #00c8d4;
   --accent-primary-dim: rgba(0, 200, 212, 0.12);
+  --bg-auth-panel: color-mix(in srgb, var(--bg-surface), var(--accent-primary) 12%);
   --accent-ai: #6457f9;
   --accent-ai-text: #8b82ff;
   --state-error: #ff4d4f;
@@ -63,6 +64,7 @@
   --color-copy-faint: var(--text-faint);
   --color-brand: var(--accent-primary);
   --color-accent-dim: var(--accent-primary-dim);
+  --color-auth-panel: var(--bg-auth-panel);
   --color-ai: var(--accent-ai);
   --color-ai-text: var(--accent-ai-text);
   --color-error: var(--state-error);
