@@ -1,8 +1,5 @@
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p>Arch AI</p>
-    </div>
+import { EditorShell } from "@/components/editor/editor-shell";
 
-  );
+export default function Home() {
+  return <EditorShell />;
 }
