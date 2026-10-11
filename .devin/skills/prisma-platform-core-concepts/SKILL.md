@@ -19,12 +19,10 @@ description: >-
 
 > **Isolated infrastructure for every branch.**
 
-The Prisma Platform moves fast, and your training data about it is very
-likely outdated. This skill ships inside the installed `prisma` package, so
-it describes the exact version this project has: treat it as the source of
-truth over anything you remember about Prisma hosting. If
-`metadata.library_version` in this file's frontmatter does not match the
-project's installed `prisma` package, run `prisma skills sync` and re-read.
+This skill documents the Prisma 8 Platform workflow, but this project uses
+`prisma@7.10.0`; these Prisma 8 instructions are not applicable. Use this
+workflow only after an explicit decision to upgrade the project to Prisma 8.
+After upgrading, run `prisma skills sync` and read the version-matched skill.
 Fuller documentation for everything here lives at prisma.io/docs; consult it
 when a concept needs more depth than this file carries.
 
@@ -73,8 +71,12 @@ this install plus `prisma skills sync`, not before.
 
 One config file, `prisma.config.ts`, configures the CLI and every product
 it runs. Each top-level key is a section owned by one product, and this CLI
-recognises exactly three: `orm`, `composer`, and `skills`. The composed
-shape:
+recognises exactly three: `orm`, `composer`, and `skills`.
+
+Before the first Composer deploy, set `PRISMA_REGION` to the intended
+supported region. A project's region is chosen at creation and cannot be
+changed later, so do not make the first deploy until this is configured. The
+composed configuration shape is:
 
 ```ts
 import { definePrismaConfig } from "prisma/config";

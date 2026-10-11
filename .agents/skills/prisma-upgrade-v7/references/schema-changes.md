@@ -100,12 +100,15 @@ datasource db {
 ```typescript
 export default defineConfig({
   datasource: {
-    url: env('DATABASE_URL'),
-    directUrl: env('DIRECT_URL'),
+    url: env('DIRECT_URL'),
     shadowDatabaseUrl: env('SHADOW_DATABASE_URL'),
   },
 })
 ```
+
+Choose the URL supplied as `datasource.url` for the CLI workflow. For Prisma
+Migrate or introspection, use a direct database connection URL; runtime
+connections may use a different URL configured in application code.
 
 ## After Schema Changes
 

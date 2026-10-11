@@ -6,7 +6,7 @@ Generate and instantiate **Prisma ORM 7** Client for SQL providers. For MongoDB,
 
 ```bash
 npm install --save-dev prisma@7
-npm install @prisma/client@7 dotenv
+npm install @prisma/client@7 dotenv @prisma/adapter-pg pg
 ```
 
 For an existing application, retain its pinned releases. For a new Prisma 7 application, use compatible CLI, client, and adapter versions and check the [Prisma 7 runtime requirements](https://www.prisma.io/docs/guides/upgrade-prisma-orm/v7#prerequisites).

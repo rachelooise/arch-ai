@@ -1,8 +1,12 @@
 # Prisma Accelerate Users
 
-Special migration instructions for users of Prisma Accelerate or Prisma Postgres with `prisma://` or `prisma+postgres://` URLs.
+Special migration instructions for Prisma Accelerate users and supported Prisma Postgres workflows using `prisma://` or `prisma+postgres://` URLs.
 
 ## Important
+
+Hosted Accelerate connections using `prisma://` or `prisma+postgres://`
+URLs are scheduled to retire on December 1, 2026. Plan to move application
+connections to pooled TCP or the supported Prisma serverless driver.
 
 **Do NOT pass Accelerate URLs to driver adapters.**
 
@@ -14,9 +18,9 @@ Driver adapters (like `PrismaPg`) expect direct database connection strings. The
 
 ```env
 # .env
-DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=..."
-# or
-DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/..."
+DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=..."  # Accelerate
+# For the supported Prisma Postgres workflow only:
+# DATABASE_URL="prisma+postgres://..."
 ```
 
 ### 2. Install Accelerate extension
@@ -34,7 +38,7 @@ import { defineConfig, env } from 'prisma/config'
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    url: env('DATABASE_URL'),  // Accelerate URL works here
+    url: env('DIRECT_DATABASE_URL'),  // Direct URL for CLI migrations and introspection
   },
 })
 ```
@@ -47,7 +51,7 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 
 // Use accelerateUrl instead of adapter
 export const prisma = new PrismaClient({
-  accelerateUrl: process.env.DATABASE_URL,
+  accelerateUrl: process.env.DATABASE_URL,  // prisma:// for Accelerate; prisma+postgres:// only for supported Prisma Postgres workflow
 }).$extends(withAccelerate())
 ```
 
@@ -64,30 +68,22 @@ const adapter = new PrismaPg({
 
 ## Migrations with Accelerate
 
-For migrations, you may need a direct database connection:
-
-### Option 1: Use Accelerate URL for everything
-
-Accelerate URLs work with Prisma CLI commands:
-
-```bash
-# Works with Accelerate URL
-prisma migrate deploy
-prisma db push
-```
-
-### Option 2: Use direct URL for migrations
+`prisma://` URLs cannot be used with Prisma Migrate or introspection. Configure
+a direct database URL in `prisma.config.ts` for those workflows. The
+`prisma+postgres://` URL is supported only in the documented Prisma Postgres
+workflow; do not assume it works for other Accelerate workflows or CLI
+commands.
 
 ```env
-DATABASE_URL="prisma+postgres://..."  # For app
-DIRECT_DATABASE_URL="postgresql://..."  # For migrations
+DATABASE_URL="prisma://..."  # For the application while still using Accelerate
+DIRECT_DATABASE_URL="postgresql://..."  # Direct database connection for CLI workflows
 ```
 
 ```typescript
 // prisma.config.ts
 export default defineConfig({
   datasource: {
-    url: env('DIRECT_DATABASE_URL'),  // Direct URL for CLI
+    url: env('DIRECT_DATABASE_URL'),
   },
 })
 ```
@@ -96,14 +92,14 @@ export default defineConfig({
 
 If using Prisma Postgres cloud database:
 
-### Same approach
+### Supported Prisma Postgres workflow
 
 ```typescript
 import { PrismaClient } from '../generated/client'
 import { withAccelerate } from '@prisma/extension-accelerate'
 
 export const prisma = new PrismaClient({
-  accelerateUrl: process.env.DATABASE_URL,  // prisma+postgres:// URL
+  accelerateUrl: process.env.DATABASE_URL,  // prisma+postgres:// in the Prisma Postgres workflow
 }).$extends(withAccelerate())
 ```
 

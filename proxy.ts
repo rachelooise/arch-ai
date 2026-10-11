@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 import { signInUrl, signUpUrl } from "@/lib/auth-routes";
 
@@ -9,7 +10,20 @@ const isPublicRoute = createRouteMatcher([
   `${signUpUrl}/(.*)`,
 ]);
 
+const isProjectApiRoute = createRouteMatcher([
+  "/api/projects",
+  "/api/projects/(.*)",
+]);
+
 export default clerkMiddleware(async (auth, request) => {
+  if (isProjectApiRoute(request)) {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return;
+  }
+
   if (!isPublicRoute(request)) {
     await auth.protect();
   }

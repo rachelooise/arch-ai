@@ -74,7 +74,14 @@ where: { deletedAt: null }
 // Is not null
 where: { deletedAt: { not: null } }
 
-// Using isSet (for optional fields)
+```
+
+### MongoDB: `isSet`
+
+`isSet` is a MongoDB-only filter; it is not a generic filter for optional SQL
+fields.
+
+```typescript
 where: { middleName: { isSet: true } }
 ```
 
@@ -201,7 +208,7 @@ where: {
 // Users without profile
 where: {
   profile: {
-    isNot: null
+    is: null
   }
 }
 ```
@@ -246,8 +253,12 @@ where: {
 
 ## Full-Text Search
 
+Prisma Client full-text search is supported for MySQL and PostgreSQL in Prisma
+ORM v7. MySQL requires a `@@fulltext` index; PostgreSQL requires the
+`fullTextSearchPostgres` preview feature to be enabled. `@@fulltext` is not a
+universal prerequisite.
+
 ```typescript
-// Requires @@fulltext index
 where: {
   content: {
     search: 'prisma database'
