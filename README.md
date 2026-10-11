@@ -11,6 +11,13 @@ access. Rooms are created privately on first authorized access and reused therea
 Run `npm run test:liveblocks` to verify the authentication and client setup with
 mocked service boundaries.
 
+Canvas autosave requires a **private Vercel Blob store** and its server-only
+`BLOB_READ_WRITE_TOKEN` in `.env.local` and the deployment environment. See
+[Vercel private Blob storage](https://vercel.com/docs/vercel-blob/private-storage).
+Prisma's existing `Project.canvasJsonPath` stores the blob URL; the JSON itself
+stays in Blob. The editor restores a snapshot only into an empty Liveblocks room,
+debounces subsequent saves, and exposes save/retry status in the workspace navbar.
+
 First, run the development server:
 
 ```bash

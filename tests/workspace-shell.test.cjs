@@ -38,7 +38,8 @@ test("workspace shell shows project context, placeholders, share action, and cur
   assert.doesNotMatch(markup, /aria-label="Share project"[^>]*disabled/);
   assert.match(markup, /aria-label="Close AI sidebar"/);
   assert.match(markup, /aria-controls="workspace-ai-sidebar"/);
-  assert.match(markup, /AI chat is coming soon/);
+  assert.match(markup, /AI Workspace/);
+  assert.match(markup, /Collaborate with Ghost AI/);
   assert.match(markup, /aria-current="page"[^>]*>Owned project<\/a>/);
   assert.match(markup, /Canvas placeholder/);
 });
@@ -54,13 +55,27 @@ test("shared workspace selects its tab and highlights the current room", () => {
 test("editor home retains project chrome without workspace actions or AI panel", () => {
   roomId = undefined;
   const markup = shellMarkup();
-  assert.doesNotMatch(markup, /Share project|Open starter templates|AI chat is coming soon|aria-current="page"/);
+  assert.doesNotMatch(markup, /Share project|Open starter templates|AI Workspace|aria-current="page"/);
   assert.match(markup, /New Project/);
 });
 
-test("closed AI placeholder is hidden and contains no chat controls", () => {
-  const markup = renderToStaticMarkup(React.createElement(AiSidebar, { isOpen: false }));
-  assert.match(markup, /hidden=""/);
-  assert.match(markup, /class="hidden /);
-  assert.doesNotMatch(markup, /<input|<textarea|<form/);
+test("closed AI workspace remains mounted for its slide transition but is inert and hidden from accessibility", () => {
+  const markup = renderToStaticMarkup(React.createElement(AiSidebar, { isOpen: false, onClose() {} }));
+  assert.match(markup, /aria-hidden="true"/);
+  assert.match(markup, /inert=""/);
+  assert.match(markup, /invisible translate-x-/);
+  assert.match(markup, /transition-\[translate,visibility\]/);
+});
+test("save failures show a visible accessible explanation and retry action", () => {
+  const { EditorNavbar } = require("../components/editor/editor-navbar.tsx");
+  const { CanvasSaveContext } = require("../components/editor/canvas-save-context.tsx");
+  const props = { projectName: "Project", isSidebarOpen: false, isAiSidebarOpen: false,
+    onToggleSidebar() {}, onToggleAiSidebar() {}, onShare() {}, onTemplates() {} };
+  const render = (status, error) => renderToStaticMarkup(React.createElement(CanvasSaveContext.Provider,
+    { value: { state: { status, error, onSave() {} }, setState() {} } }, React.createElement(EditorNavbar, props)));
+  const markup = render("error", "Canvas storage access was denied.");
+  assert.match(markup, /role="alert"/);
+  assert.match(markup, /Canvas storage access was denied\./);
+  assert.match(markup, />Retry<\/button>/);
+  assert.doesNotMatch(render("saved", null), /role="alert"|>Retry<\/button>/);
 });
