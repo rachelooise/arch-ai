@@ -10,6 +10,7 @@ model Project {
   name           String
   description    String?
   status         ProjectStatus         @default(DRAFT)
+  /// URL of the private Vercel Blob containing the saved canvas JSON.
   canvasJsonPath String?
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt

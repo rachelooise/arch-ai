@@ -1,7 +1,7 @@
 "use client";
 
 import { useLiveblocksFlow } from "@liveblocks/react-flow";
-import { useRoom } from "@liveblocks/react/suspense";
+import { useRoom, useUpdateMyPresence } from "@liveblocks/react/suspense";
 import { useContext, useEffect, useRef, type DragEvent } from "react";
 import { Background, BackgroundVariant, ConnectionMode, MarkerType, ReactFlow, type DefaultEdgeOptions, type ReactFlowInstance } from "@xyflow/react";
 
@@ -9,6 +9,9 @@ import { CanvasNodeRenderer } from "@/components/editor/canvas-node";
 import { CanvasEdgeRenderer } from "@/components/editor/canvas-edge";
 import { ShapePanel } from "@/components/editor/shape-panel";
 import { CanvasControls } from "@/components/editor/canvas-controls";
+import { CanvasParticipants } from "@/components/editor/canvas-participants";
+import { CanvasCursors } from "@/components/editor/canvas-cursors";
+import { CanvasPersistence } from "@/components/editor/canvas-persistence";
 import { StarterTemplatesContext } from "@/components/editor/starter-templates-context";
 import { StarterTemplatesModal } from "@/components/editor/starter-templates-modal";
 import { instantiateTemplate, type CanvasTemplate } from "@/components/editor/starter-templates";
@@ -29,6 +32,7 @@ export function Canvas() {
   const flow = useRef<ReactFlowInstance<CanvasNode, CanvasEdge> | null>(null);
   const templates = useContext(StarterTemplatesContext);
   const room = useRoom();
+  const updateMyPresence = useUpdateMyPresence();
   const pendingFit = useRef<CanvasNode[] | null>(null);
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, onDelete } =
     useLiveblocksFlow<CanvasNode, CanvasEdge>({
@@ -36,6 +40,8 @@ export function Canvas() {
       nodes: { initial: [] },
       edges: { initial: [] },
     });
+
+  useEffect(() => () => updateMyPresence({ cursor: null }), [updateMyPresence]);
 
   useEffect(() => {
     const imported = pendingFit.current;
@@ -94,12 +100,21 @@ export function Canvas() {
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onDelete={onDelete}
+      onMouseMove={(event) => {
+        if (!flow.current) return;
+        updateMyPresence({ cursor: flow.current.screenToFlowPosition({ x: event.clientX, y: event.clientY }) });
+      }}
+      onMouseLeave={() => updateMyPresence({ cursor: null })}
       connectionMode={ConnectionMode.Loose}
       fitView
       colorMode="dark"
     >
       <CanvasControls />
       <Background variant={BackgroundVariant.Dots} />
+      <CanvasCursors />
+      <CanvasParticipants />
+      <CanvasPersistence nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange}
+        onRestore={(state) => { pendingFit.current = state.nodes; }} />
     </ReactFlow>
     <ShapePanel onAddShape={addShape} />
     {templates?.isOpen && <StarterTemplatesModal onImport={importTemplate} onClose={templates.onClose} />}

@@ -42,7 +42,7 @@ export function CanvasRoom({ roomId }: { roomId: string }) {
   return (
     <CanvasErrorBoundary key={roomId}>
       <LiveblocksProvider authEndpoint="/api/liveblocks-auth">
-        <RoomProvider id={roomId} initialPresence={{ cursor: null, isThinking: false }}>
+        <RoomProvider id={roomId} initialPresence={{ cursor: null, thinking: false }}>
           <RoomCanvas />
         </RoomProvider>
       </LiveblocksProvider>

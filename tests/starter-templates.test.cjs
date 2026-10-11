@@ -17,6 +17,7 @@ stub('react', { ...React, useContext: () => context,
 stub('@liveblocks/react/suspense', {
   useRoom: () => ({ batch: (callback) => { batches++; callback(); } }),
   useUndo: () => () => {}, useRedo: () => () => {}, useCanUndo: () => false, useCanRedo: () => false,
+  useUpdateMyPresence: () => () => {},
 });
 stub('@liveblocks/react-flow', { useLiveblocksFlow: () => ({ ...state,
   // Liveblocks handles deletion exclusively through onDelete; remove changes are ignored.

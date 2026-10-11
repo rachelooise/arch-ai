@@ -6,6 +6,7 @@ const React = require('react');
 const { renderToStaticMarkup } = require('react-dom/server');
 let provider, room, options, flow, listener, failed, loading;
 let labelUpdates = [];
+let presenceUpdates = [], effects = [];
 const handlers = {
   onNodesChange() {}, onEdgesChange() {}, onConnect() {}, onDelete() {},
 };
@@ -18,7 +19,8 @@ function stub(name, exports) {
   mod.loaded = true;
   require.cache[path] = mod;
 }
-stub('react', { ...React, useContext: () => null, useEffect: () => {}, useState: () => [failed, (value) => { failed = value; }], useRef: (value) => ({ current: value }) });
+stub('react', { ...React, useContext: () => null, useEffect: (effect) => effects.push(effect), useState: () => [failed, (value) => { failed = value; }], useRef: (value) => ({ current: value }) });
+stub('@clerk/nextjs', { useAuth: () => ({ userId: 'current-user' }), UserButton: () => React.createElement('button', { 'aria-label': 'Clerk profile' }) });
 stub('@liveblocks/react/suspense', {
   LiveblocksProvider: (props) => { provider = props; return props.children; },
   RoomProvider: (props) => { room = props; return props.children; },
@@ -27,6 +29,8 @@ stub('@liveblocks/react/suspense', {
   useUndo: () => () => {}, useRedo: () => () => {},
   useCanUndo: () => false, useCanRedo: () => false,
   useRoom: () => ({ batch: (callback) => callback() }),
+  useOthersMapped: () => [], useOthersConnectionIds: () => [],
+  useUpdateMyPresence: () => (value) => presenceUpdates.push(value),
 });
 stub('@liveblocks/react-flow', {
   useLiveblocksFlow: (value) => { options = value; return { nodes: syncedNodes, edges: syncedEdges, ...handlers }; },
@@ -46,12 +50,12 @@ stub('@xyflow/react', {
 });
 const { CanvasRoom } = require('../components/editor/canvas-room.tsx');
 function markup(roomId = 'project') { return renderToStaticMarkup(React.createElement(CanvasRoom, { roomId })); }
-beforeEach(() => { failed = false; loading = false; labelUpdates = []; provider = room = options = flow = listener = undefined; });
+beforeEach(() => { failed = false; loading = false; labelUpdates = []; presenceUpdates = []; effects = []; provider = room = options = flow = listener = undefined; });
 test('room setup scopes authentication and initializes the full typed presence', () => {
   markup('shared-project');
   assert.equal(provider.authEndpoint, '/api/liveblocks-auth');
   assert.equal(room.id, 'shared-project');
-  assert.deepEqual(room.initialPresence, { cursor: null, isThinking: false });
+  assert.deepEqual(room.initialPresence, { cursor: null, thinking: false });
 });
 test('synced data and all mutation handlers reach React Flow with empty initial data', () => {
   const html = markup();
@@ -100,6 +104,23 @@ test('room changes remount the error boundary and room contents', () => {
 });
 
 const { Canvas } = require('../components/editor/canvas.tsx');
+test('React Flow mouse events broadcast flow coordinates and clear cursors on leave and unmount', () => {
+  const wrapper = Canvas();
+  const props = wrapper.props.children[0].props;
+  props.onMouseMove({ clientX: 300, clientY: 200 });
+  assert.deepEqual(presenceUpdates, []);
+  props.onInit({ screenToFlowPosition: (point) => {
+    assert.deepEqual(point, { x: 300, y: 200 });
+    return { x: -40, y: 75 };
+  } });
+  props.onMouseMove({ clientX: 300, clientY: 200 });
+  assert.deepEqual(presenceUpdates, [{ cursor: { x: -40, y: 75 } }]);
+  props.onMouseLeave();
+  assert.deepEqual(presenceUpdates.at(-1), { cursor: null });
+  const cleanup = effects[0]();
+  cleanup();
+  assert.deepEqual(presenceUpdates, [{ cursor: { x: -40, y: 75 } }, { cursor: null }, { cursor: null }]);
+});
 const { ShapePanel } = require('../components/editor/shape-panel.tsx');
 const { CanvasNodeRenderer } = require('../components/editor/canvas-node.tsx');
 const { SHAPE_DRAG_TYPE, SHAPE_SIZES, DEFAULT_NODE_COLOR, parseShapeDragPayload, createShapeNode } = require('../lib/canvas-shapes.ts');
