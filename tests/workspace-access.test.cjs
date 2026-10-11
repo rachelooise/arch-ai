@@ -43,6 +43,9 @@ replaceModule("../lib/prisma.ts", {
 });
 
 const { getCurrentProjectIdentity, getProjectAccess } = require("../lib/project-access.ts");
+replaceModule("../components/editor/canvas-room.tsx", {
+  CanvasRoom: ({ roomId }) => require("react").createElement("div", { "data-canvas-room": roomId }),
+});
 const WorkspacePage = require("../app/editor/[roomId]/page.tsx").default;
 
 async function workspaceMarkup(roomId) {
@@ -105,10 +108,10 @@ test("missing and unauthorized workspaces render the same AccessDenied view", as
   assert.doesNotMatch(missing, /Private project|data-room-id|architecture canvas/);
 });
 
-test("authorized workspace renders the canvas placeholder with the aligned room ID", async () => {
+test("authorized workspace mounts the collaborative canvas with the aligned room ID", async () => {
   const markup = await workspaceMarkup("shared");
   assert.match(markup, /data-room-id="shared"/);
   assert.match(markup, /aria-label="Shared project canvas"/);
-  assert.match(markup, /Canvas tools are coming soon/);
+  assert.match(markup, /data-canvas-room="shared"/);
   assert.doesNotMatch(markup, /Access denied/);
 });

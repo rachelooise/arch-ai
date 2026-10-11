@@ -1,10 +1,33 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@xyflow/react/dist/style.css";
 
 @custom-variant dark (&:is(.dark *));
 
+.canvas-connection-handle {
+  opacity: 0;
+  transition: opacity 120ms;
+}
+
+.react-flow__node:hover .canvas-connection-handle,
+.canvas-connection-handle:focus-visible {
+  opacity: 1;
+}
+
+.node-color-swatch:hover,
+.node-color-swatch:focus-visible {
+  box-shadow: 0 0 0 1px var(--swatch-text),
+    0 0 6px 1px color-mix(in srgb, var(--swatch-text) 45%, transparent);
+}
+
+body:has([data-template-dialog]) [data-slot="dialog-overlay"] {
+  background-color: rgb(0 0 0 / 70%);
+  backdrop-filter: blur(4px);
+}
+
 :root {
+  --canvas-edge-color: #f8fafc;
   color-scheme: dark;
 
   --bg-base: #080809;

@@ -73,7 +73,6 @@ where: { deletedAt: null }
 
 // Is not null
 where: { deletedAt: { not: null } }
-
 ```
 
 ### MongoDB: `isSet`
