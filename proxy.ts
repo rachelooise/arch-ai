@@ -13,6 +13,7 @@ const isPublicRoute = createRouteMatcher([
 const isProjectApiRoute = createRouteMatcher([
   "/api/projects",
   "/api/projects/(.*)",
+  "/api/liveblocks-auth",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AccessDenied } from "@/components/editor/access-denied";
+import { CanvasRoom } from "@/components/editor/canvas-room";
 import { getProjectAccess } from "@/lib/project-access";
 
 async function Workspace({ params }: { params: Promise<{ roomId: string }> }) {
@@ -9,11 +10,8 @@ async function Workspace({ params }: { params: Promise<{ roomId: string }> }) {
 
   return (
     <section aria-label={`${project.name} canvas`} data-room-id={project.id}
-      className="flex h-full min-h-0 w-full items-center justify-center bg-base px-6 text-center">
-      <div className="space-y-2">
-        <h2 className="text-xl font-semibold">Your architecture canvas</h2>
-        <p className="text-sm text-copy-muted">Your shared workspace is ready. Canvas tools are coming soon.</p>
-      </div>
+      className="h-full min-h-0 w-full bg-base">
+      <CanvasRoom roomId={project.id} />
     </section>
   );
 }

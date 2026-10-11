@@ -2,6 +2,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+Realtime collaboration requires `LIVEBLOCKS_SECRET_KEY` in `.env.local` (and in
+the deployment environment). Obtain a secret key from the Liveblocks dashboard;
+keep it server-only. `POST /api/liveblocks-auth` accepts `{ "room": "<project-id>" }`
+and issues a room-scoped session after checking Clerk authentication and project
+access. Rooms are created privately on first authorized access and reused thereafter.
+
+Run `npm run test:liveblocks` to verify the authentication and client setup with
+mocked service boundaries.
+
 First, run the development server:
 
 ```bash

@@ -7,6 +7,10 @@ Special migration instructions for Prisma Accelerate users and supported Prisma 
 Hosted Accelerate connections using `prisma://` or `prisma+postgres://`
 URLs are scheduled to retire on December 1, 2026. Plan to move application
 connections to pooled TCP or the supported Prisma serverless driver.
+For standard Node.js apps, use a pooled PostgreSQL TCP connection with
+`@prisma/adapter-pg` and `pg`; for supported serverless deployments, use
+`@prisma/adapter-ppg` with `@prisma/ppg`. Keep a direct database URL
+configured for Prisma Migrate and introspection.
 
 **Do NOT pass Accelerate URLs to driver adapters.**
 
