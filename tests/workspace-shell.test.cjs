@@ -34,6 +34,7 @@ test("workspace shell shows project context, placeholders, share action, and cur
   const markup = shellMarkup();
   assert.match(markup, /<h1[^>]*>Owned project<\/h1>/);
   assert.match(markup, /aria-label="Share project"/);
+  assert.match(markup, /aria-label="Open starter templates"/);
   assert.doesNotMatch(markup, /aria-label="Share project"[^>]*disabled/);
   assert.match(markup, /aria-label="Close AI sidebar"/);
   assert.match(markup, /aria-controls="workspace-ai-sidebar"/);
@@ -53,7 +54,7 @@ test("shared workspace selects its tab and highlights the current room", () => {
 test("editor home retains project chrome without workspace actions or AI panel", () => {
   roomId = undefined;
   const markup = shellMarkup();
-  assert.doesNotMatch(markup, /Share project|AI chat is coming soon|aria-current="page"/);
+  assert.doesNotMatch(markup, /Share project|Open starter templates|AI chat is coming soon|aria-current="page"/);
   assert.match(markup, /New Project/);
 });
 

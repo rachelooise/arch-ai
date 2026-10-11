@@ -1,7 +1,7 @@
-import type { CanvasNode } from "@/types/canvas";
+import { NODE_COLORS, type CanvasNode } from "@/types/canvas";
 
 export const SHAPE_DRAG_TYPE = "application/arch-ai-shape";
-export const DEFAULT_NODE_COLOR = "#1F1F1F";
+export const DEFAULT_NODE_COLOR = NODE_COLORS[0].color;
 export const SHAPE_SIZES = {
   rectangle: { width: 180, height: 100 },
   diamond: { width: 180, height: 180 },
